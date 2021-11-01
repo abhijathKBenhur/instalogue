@@ -1,0 +1,38 @@
+.catalogue{
+    padding: 2rem;
+    margin-top: 54px;
+    .page-info{
+        align-items: center;
+        gap:30px;
+        .profile-image{
+            img{
+                width: 10rem;
+                height: 10rem;
+            }
+        }
+        .profile-info{
+        }
+    }
+    .categories{
+        display: flex;
+        overflow: scroll;
+        gap: 30px;
+        .highlight-container{
+            width: 5rem;
+            height: 5rem;
+            border-radius: 50%;
+            img{
+                width: 5rem;
+                height: 5rem;
+            }
+        }
+    }
+    .posts{
+        .post-container{
+            .post{
+                height: 100%;
+                width: 100%;
+            }
+        }
+    }
+}

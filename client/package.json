@@ -1,0 +1,56 @@
+{
+  "name": "IdeaTribe",
+  "version": "0.1.0",
+  "description": "Ideas on Blockchain",
+  "author": "abhijathkbenhur@gmail.com",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "babel-polyfill": "6.26.0",
+    "babel-preset-env": "1.7.0",
+    "babel-preset-es2015": "6.24.1",
+    "babel-preset-stage-2": "6.24.1",
+    "babel-preset-stage-3": "6.24.1",
+    "babel-register": "6.26.0",
+    "bootstrap": "4.3.1",
+    "chai": "4.2.0",
+    "chai-as-promised": "7.1.1",
+    "chai-bignumber": "3.0.0",
+    "crypto-js": "^4.1.1",
+    "jquery": "^3.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.21",
+    "node-sass": "^4.14.1",
+    "path": "^0.12.7",
+    "react": "16.8.4",
+    "react-bootstrap": "1.5.2",
+    "react-confirm": "^0.1.23",
+    "react-dom": "16.8.4",
+    "react-fontawesome": "^1.7.1",
+    "react-modal": "^3.12.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "2.1.3",
+    "source-map-explorer": "^2.5.2",
+    "typescript": "^4.2.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ],
+  "devDependencies": {
+    "file-loader": "^6.2.0"
+  }
+}
