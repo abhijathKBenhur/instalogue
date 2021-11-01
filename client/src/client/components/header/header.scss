@@ -1,11 +1,18 @@
 .header-container{
     border-bottom: 1px solid #DBDBDB;
+    background-color: #FFFFFF;
     height: 54px;
     position: fixed;
+    align-items: center;
+    z-index: 10;
     .appHeader{
-        align-items: center;
         display: flex;
         justify-content: space-between;
+        align-items: center;
+        .brand{
+            font-weight: 500;
+            font-size: 20px;
+        }
     }
 }
 

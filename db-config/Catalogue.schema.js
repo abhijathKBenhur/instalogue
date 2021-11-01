@@ -4,9 +4,9 @@ const Schema = mongoose.Schema
 const Catalogue = new Schema(
     {
         
-        categories: { type: String},
+        category: { type: String},
         postURL: { type: String },
-        profileURL90: { type: String},
+        profileURL: { type: String},
         
     },
     { timestamps: true },

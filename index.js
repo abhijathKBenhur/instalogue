@@ -7,7 +7,7 @@ const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
+const mongoConnection = require("./db-config/mongodb");
 dotenv.config();
 
 app.use(express.json());

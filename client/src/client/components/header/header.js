@@ -12,10 +12,10 @@ const Header = (props) => {
 
   return (
     <Col className="header-container">
-      <Row>
+      <Row className="h-100">
         <Container className="appHeader ">
-          <div className="brand">Instalogue</div>
-          <div className="searchbar">Searchbar</div>
+          <span className="brand">Instalogue</span>
+          {/* <div className="searchbar">Searchbar</div> */}
         </Container>
       </Row>
     </Col>
