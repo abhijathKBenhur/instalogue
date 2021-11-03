@@ -1,5 +1,4 @@
 .catalogue{
-    padding: 7rem;
     padding-top: 100px;
     .page-header{
         align-items: center;
@@ -24,6 +23,7 @@
                     justify-content: center;
                     line-height: 20px;
                     .stat-count{
+                        text-align: center;
                         font-weight: bold;
                         font-size: 1.5rem;
                         justify-content: center;
@@ -36,7 +36,7 @@
                 }
             }
             .description{
-                margin-top: 2rem;
+                margin-top: 0.5rem;
             }
         }
     }
@@ -46,19 +46,29 @@
         display: flex;
         overflow: scroll;
         gap: 30px;
+        .highlight-key{
+            font-size: 10px;
+            line-height: 12px;
+            text-align: center;
+            &.selected{
+                color: #032765;
+            }
+        }
         .highlight-container{
             border-radius: 100%;
             padding: 3px;
-            border: 1px solid grey;
-            &.selected{
-                border: 1px solid #0A2765;
-            }
+            border: 1px solid #F1F1F1;
+            width: 5.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
+            &.selected{
+                border: 1px solid #032765;
+            }
             img{
                 width: 5rem;
                 height: 5rem;
+                
             }
         }
     }

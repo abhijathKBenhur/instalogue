@@ -2,6 +2,39 @@ const CatalogueSchema = require("../db-config/Catalogue.schema");
 const express = require("express");
 const router = express.Router();
 
+addStore = async (req, res) => {
+
+  const newStore = new CatalogueSchema({
+    category: req.body.category,
+    subCategory:  req.body.subCategory,
+    thumbnailURL:  req.body.thumbnailURL,
+    postURL:  req.body.postURL,
+    storeName:  req.body.storeName,
+  })
+
+  if (!newStore) {
+    return res.status(400).json({ success: false, error: err });
+  }
+
+  newStore
+    .save()
+    .then(() => {
+      return res.status(201).json({
+        success: true,
+        message: "Store added!",
+      });
+    })
+    .catch((error) => {
+      return res.status(400).json({
+        error,
+        message: "New store not posted!",
+      });
+    });
+  
+}
+
+
+
 getStores = async (req, res) => {
   let selectedCategory = req.body.selectedCategory;
   let searchString = req.body.searchString;
@@ -32,6 +65,34 @@ getStores = async (req, res) => {
     });
 };
 
+
+
+getCategories = async (req, res) => {
+  CatalogueSchema.find({})
+    .distinct("category", (err,categories) => {
+      if(!err){
+        return res.status(200).json({ success: true, data: categories });
+      }
+    })
+};
+
+getSubCategories = async (req, res) => {
+  let payLoad = {}
+  if(req.body.category){
+    payLoad.category = req.body.category
+  }
+  CatalogueSchema.find(payLoad)
+    .distinct("subCategory", (err,subCategories) => {
+      if(!err){
+        return res.status(200).json({ success: true, data: subCategories });
+      }
+    })
+};
+
 router.post("/getStores", getStores);
+router.post("/addStore", addStore);
+router.post("/getCategories", getCategories);
+router.post("/getSubCategories", getSubCategories);
+
 
 module.exports = router;

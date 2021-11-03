@@ -5,8 +5,10 @@ const Catalogue = new Schema(
     {
         
         category: { type: String},
+        subCategory: { type: String},
+        thumbnailURL: { type: String },
         postURL: { type: String },
-        profileURL: { type: String},
+        storeName: { type: String},
         
     },
     { timestamps: true },
