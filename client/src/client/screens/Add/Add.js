@@ -13,6 +13,7 @@ function Add(props) {
     postURL: "",
     postURL: "",
     storeName: "",
+    password:""
   });
 
   const handleChange = (event) => {
@@ -61,6 +62,12 @@ function Add(props) {
         placeholder="storeName"
         value={form.storeName}
         name="storeName"
+        onChange={handleChange}
+      />
+      <Form.Control
+        placeholder="password"
+        value={form.password}
+        name="password"
         onChange={handleChange}
       />
       <Button

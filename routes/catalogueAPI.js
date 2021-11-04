@@ -12,7 +12,7 @@ addStore = async (req, res) => {
     storeName:  req.body.storeName,
   })
 
-  if (!newStore) {
+  if (!newStore || req.body.password == "itsmeaddy") {
     return res.status(400).json({ success: false, error: err });
   }
 
