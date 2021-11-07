@@ -76,10 +76,14 @@
     .subcategories{
         display: flex;
         gap: 0.5rem;
+        height: 40px;
+        align-items: center;
+        border-bottom: 1px solid #DBDBDB;
         .sub-category{
             border: 1px solid #DBDBDB;
             border-radius: 3px;
             padding: 2px 7px;
+            height: 24px;
             cursor: pointer;
             &.selected{
                 border : 1px solid $primary;

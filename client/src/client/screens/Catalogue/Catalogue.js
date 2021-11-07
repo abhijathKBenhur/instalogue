@@ -19,7 +19,6 @@ function Catalogue(props) {
   const [isLoading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
 
-
   useEffect(() => {
     reloadStores();
   }, [selectedSubCategory]);
@@ -27,7 +26,12 @@ function Catalogue(props) {
 
   useEffect(() => {
     reloadStores();
-    loadSubCategories(selectedCategory)
+    if(selectedCategory){
+      loadSubCategories(selectedCategory)
+    }else{
+      setSelectedSubCategory(undefined)
+      setAvailableSubCategories([])
+    }
   }, [selectedCategory]);
 
 
@@ -39,7 +43,6 @@ function Catalogue(props) {
     CatalogueInterface.getCategories().then((categories) => {
       let categoryList = _.get(categories, "data.data");
       setAvailableCategories(categoryList)
-      loadSubCategories(categoryList[0])
     });
   };
 
