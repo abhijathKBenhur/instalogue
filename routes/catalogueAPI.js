@@ -37,6 +37,7 @@ addStore = async (req, res) => {
 
 getStores = async (req, res) => {
   let selectedCategory = req.body.selectedCategory;
+  let selectedSubCategory = req.body.selectedSubCategory;
   let searchString = req.body.searchString;
   let searchOrArray = [];
   let payLoad = {

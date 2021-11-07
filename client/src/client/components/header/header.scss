@@ -1,6 +1,8 @@
+@import "../../commons/Common.scss";
 .header-container{
     border-bottom: 1px solid #DBDBDB;
-    background: linear-gradient(to right,  #F7C5DB, #CDB7EC);
+    background-color: white;
+    // background: linear-gradient(to right,  #F7C5DB, #CDB7EC);
     height: 54px;
     position: fixed;
     align-items: center;
@@ -12,7 +14,7 @@
         .brand{
             font-weight: 500;
             font-size: 20px;
-            color: #881897;
+            color: $primary;
         }
     }
 }

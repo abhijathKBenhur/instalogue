@@ -6,6 +6,12 @@
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
   -webkit-font-smoothing: antialiased;
+  .app-content{
+    position: absolute;
+    width: 100%;
+    top: 60px;
+  }
+
 }
 
 
@@ -208,7 +214,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .second-header {
   font-family: "Inter, system-ui", "Helvetica Neue", Helvetica, Arial,
     sans-serif;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 700;
   line-height: 24px;
 }

@@ -21,7 +21,7 @@ let history = useHistory();
       <Row className="h-100">
         <Container className="appHeader ">
           <span className="brand master-grey cursor-pointer" onClick={() => {goHome()}} >Instalogue.live</span>
-          {/* <div className="searchbar">Searchbar</div> */}
+          {/* <div className="isntaicon">Searchbar</div> */}
         </Container>
       </Row>
     </Col>

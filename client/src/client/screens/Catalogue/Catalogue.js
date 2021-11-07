@@ -1,5 +1,3 @@
-
-
 import _ from "lodash";
 import { Row, Col, Container, Image } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
@@ -12,12 +10,26 @@ function Catalogue(props) {
   const [searchString, setSearchString] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(undefined);
   const [selectedSubCategory, setSelectedSubCategory] = useState(undefined);
-  const [posts, setPosts] = useState([]);
+
+
   const [availableCategories, setAvailableCategories] = useState([]);
-  const [subCategories, setSubCategories] = useState([]);
+  const [availableSubCategories, setAvailableSubCategories] = useState([]);
+
+
+  const [isLoading, setLoading] = useState(false);
+  const [posts, setPosts] = useState([]);
+
+
   useEffect(() => {
     reloadStores();
-  }, [searchString, selectedCategory]);
+  }, [selectedSubCategory]);
+
+
+  useEffect(() => {
+    reloadStores();
+    loadSubCategories(selectedCategory)
+  }, [selectedCategory]);
+
 
   useEffect(() => {
     loadCategories();
@@ -25,34 +37,39 @@ function Catalogue(props) {
 
   const loadCategories = () => {
     CatalogueInterface.getCategories().then((categories) => {
-      setAvailableCategories(categories.data.data);
+      let categoryList = _.get(categories, "data.data");
+      setAvailableCategories(categoryList)
+      loadSubCategories(categoryList[0])
     });
   };
 
   const loadSubCategories = (category) => {
-    CatalogueInterface.getSubCategories({
-      category: category,
-    }).then((subCategories) => {
-      setSubCategories(subCategories.data.data || []);
-    });
+    setSelectedSubCategory(undefined)
+    if (category || selectedCategory) {
+      CatalogueInterface.getSubCategories({
+        category: category || selectedCategory,
+      }).then((subCategories) => {
+        setAvailableSubCategories(subCategories.data.data)
+      });
+    }
   };
 
-  const categoryChanged = (category) => {
-    setSelectedCategory(category);
-    loadSubCategories(category);
-  };
 
   const reloadStores = () => {
+    setLoading(true);
     CatalogueInterface.getStores({
-      searchString,
-      selectedCategory,
+      searchString: searchString,
+      selectedCategory: selectedCategory,
+      selectedSubCategory: selectedSubCategory,
     }).then((results) => {
+      setLoading(false);
       setPosts(_.get(results, "data.data"));
     });
   };
 
   return (
     <Container className="catalogue">
+      {isLoading && <div className="loader"> </div>}
       <div className="page-header d-flex">
         <div className="profile-image-name">
           <div>
@@ -64,13 +81,14 @@ function Catalogue(props) {
               height="120rem"
             ></Image>
           </div>
-          {/* <div className="pageName">Instalogue</div> */}
+          <div className="pageName second-grey">Instalogue</div>
+          <div className="pageDesc second-grey">Catalogue for Instastores</div>
         </div>
         <div className="profile-stats-desc">
-          <div className="stats">
+          {/* <div className="stats">
             <div className="stat-entry">
-              <span className="stat-count">102</span>
-              <span className="stat-value third-header">followers</span>
+              <span className="stat-count">{storeCount}</span>
+              <span className="stat-value third-header">Stores</span>
             </div>
             <div className="stat-entry">
               <span className="stat-count">102</span>
@@ -80,11 +98,14 @@ function Catalogue(props) {
               <span className="stat-count">102</span>
               <span className="stat-value third-header">followers</span>
             </div>
-          </div>
+          </div> */}
           <div className="description second-grey">
             <span>
-            Instagram is now home for numerous online stores, offering wonderful, rare collection of products.
-            Instalogue index these stores to provide better searchability based on categories and subcategories. 
+              Instagram is now home for numerous online stores with wonderful
+              and vivid collection of products. Instalogue targets to index
+              these pages and provide better discoverability for the products
+              and increased choice for the consumers. Tap on highlights to
+              filter. Happy browsing.
             </span>
             {/* While providing discoverability for online stores, instalogue aims at providing an online shopping mall experience. */}
           </div>
@@ -96,11 +117,13 @@ function Catalogue(props) {
             <div>
               <div
                 className="highlight"
-                className={highlight == selectedCategory ? "selected" : ""}
+                className={
+                  highlight == selectedCategory ? "selected" : ""
+                }
                 onClick={() => {
                   selectedCategory == highlight
-                    ? categoryChanged(undefined)
-                    : categoryChanged(highlight);
+                    ? setSelectedCategory(undefined)
+                    : setSelectedCategory(highlight);
                 }}
               >
                 <div
@@ -112,7 +135,12 @@ function Catalogue(props) {
                 >
                   <Image
                     roundedCircle
-                    src={window.location.origin+"/categories/" + highlight +".jpg"}
+                    src={
+                      window.location.origin +
+                      "/categories/" +
+                      highlight +
+                      ".jpg"
+                    }
                     alt={highlight}
                     title={highlight}
                   ></Image>
@@ -125,10 +153,22 @@ function Catalogue(props) {
                     : "highlight-key mt-1"
                 }
               >
-                <span className="second-grey">{highlight}</span>
+                <span className="second-header">{highlight}</span>
               </div>
             </div>
           );
+        })}
+      </div>
+      <div className="subcategories mt-3">
+        {availableSubCategories.map((subCategory) => {
+          return <div
+          className={
+            subCategory == selectedSubCategory
+              ? "selected sub-category second-grey"
+              : "sub-category second-grey"
+          }
+          onClick={() => {selectedSubCategory == subCategory ? setSelectedSubCategory(undefined) : setSelectedSubCategory(subCategory)}}
+          >{subCategory}</div>;
         })}
       </div>
       <div className="posts mt-3">

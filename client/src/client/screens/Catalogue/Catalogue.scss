@@ -1,5 +1,28 @@
+@import "../../commons/Common.scss";
 .catalogue{
-    padding-top: 100px;
+    .loader{
+        position: fixed;
+        top: 0px;
+        width: 100%;
+        left: 0;
+        height: 54px;
+        background: linear-gradient(45deg, #F1C3DD, #ade9db, #86c5db, #D2B7EA);
+        animation: gradient 2s ease infinite;
+        -webkit-animation: gradient 2s ease infinite;
+        background-size: 400% 400%;
+        @-webkit-keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 50% 100%;
+            }
+            100% {
+                background-position: 3% 5%;
+            }
+        }
+        
+    }
     .page-header{
         align-items: center;
         gap:30px;
@@ -11,6 +34,15 @@
             .profile-brand{
                 display: flex;
                 justify-content: center;
+            }
+            .pageName{
+                color: $primary;
+            }
+            .pageDesc{
+                font-size: 11px;
+                white-space: pre;
+                line-height: 0;
+                margin-top: -5px;
             }
         }
         .profile-stats-desc{
@@ -41,7 +73,19 @@
         }
     }
 
-
+    .subcategories{
+        display: flex;
+        gap: 0.5rem;
+        .sub-category{
+            border: 1px solid #DBDBDB;
+            border-radius: 3px;
+            padding: 2px 7px;
+            cursor: pointer;
+            &.selected{
+                border : 1px solid $primary;
+            }
+        }
+    }
     .highlight-filters{
         display: flex;
         overflow: scroll;
@@ -57,13 +101,13 @@
         .highlight-container{
             border-radius: 100%;
             padding: 3px;
-            border: 1px solid #F1F1F1;
+            border: 2px solid #F1F1F1;
             width: 5.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             &.selected{
-                border: 1px solid #032765;
+                border: 2px solid $primary;
             }
             img{
                 width: 5rem;
