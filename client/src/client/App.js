@@ -23,11 +23,8 @@ const App = () => {
           <Switch>
             <Route path="/home" render={(props) => <Catalogue />} />
             <Route path="/itsmelee" render={(props) => <Add />} />
-            <Route
-              exact
-              path="/"
-              render={() => <Redirect from="/" to="/home" />}
-            />
+            <Route path="/" render={(props) => <Catalogue />} />
+            <Route/>
           </Switch>
         </div>
       </div>
