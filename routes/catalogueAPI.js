@@ -45,12 +45,17 @@ getStores = async (req, res) => {
   let payLoad = {
   };
 
+  // if (selectedCategory) {
+  //   searchOrArray.push({ category: { $regex: new RegExp(selectedCategory, "i") } });
+  // }
+  // if (searchString) {
+  //   searchOrArray.push({ title: { $regex: new RegExp(searchString, "i") } });
+  // }
   if (selectedCategory) {
-    searchOrArray.push({ category: { $regex: new RegExp(selectedCategory, "i") } });
+    payLoad.category = selectedCategory
   }
-  if (searchString) {
-    searchOrArray.push({ title: { $regex: new RegExp(searchString, "i") } });
-
+  if(selectedSubCategory){
+    payLoad.subCategory = selectedSubCategory
   }
   if (searchOrArray.length > 0) {
     payLoad.$or = searchOrArray;
