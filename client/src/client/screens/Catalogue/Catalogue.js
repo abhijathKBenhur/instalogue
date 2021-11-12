@@ -72,7 +72,6 @@ function Catalogue(props) {
 
   return (
     <Container className="catalogue">
-      {isLoading && <div className="loader"> </div>}
       <div className="page-header d-flex">
         <div className="profile-image-name">
           <div>
@@ -174,7 +173,8 @@ function Catalogue(props) {
           >{subCategory}</div>;
         })}
       </div>
-      <div className="posts mt-3">
+      <div className="posts mt-1">
+        <div className={isLoading ? "loader active" : "loader" }></div>
         <Row>
           {posts.map((post) => {
             return (
