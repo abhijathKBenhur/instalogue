@@ -75,11 +75,11 @@
 
     .subcategories{
         display: flex;
-        gap: 0.5rem;
+        gap: 10px;
         height: 40px;
         align-items: center;
         border-bottom: 1px solid #DBDBDB;
-        overflow: scroll;
+        overflow: auto;
         .sub-category{
             border: 1px solid #DBDBDB;
             border-radius: 3px;
@@ -88,13 +88,15 @@
             cursor: pointer;
             &.selected{
                 border : 1px solid $primary;
+                background: #ecdffd;
+                color: black;
             }
             white-space: nowrap;
         }
     }
     .highlight-filters{
         display: flex;
-        overflow: scroll;
+        overflow: auto;
         gap: 30px;
         .highlight-key{
             font-size: 10px;
