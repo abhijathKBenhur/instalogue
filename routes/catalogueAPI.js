@@ -10,6 +10,7 @@ addStore = async (req, res) => {
     thumbnailURL:  req.body.thumbnailURL,
     postURL:  req.body.postURL,
     storeName:  req.body.storeName,
+    keywords:  req.body.keywords,
   })
 
   if (!newStore || req.body.password != "itsmeaddy") {

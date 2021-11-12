@@ -11,9 +11,10 @@ function Add(props) {
     category: "",
     subCategory: "",
     postURL: "",
-    postURL: "",
+    thumbnailURL: "",
     storeName: "",
-    password:""
+    password:"",
+    keywords:""
   });
 
   const handleChange = (event) => {
@@ -62,6 +63,12 @@ function Add(props) {
         placeholder="storeName"
         value={form.storeName}
         name="storeName"
+        onChange={handleChange}
+      />
+      <Form.Control
+        placeholder="keywords"
+        value={form.keywords}
+        name="keywords"
         onChange={handleChange}
       />
       <Form.Control
