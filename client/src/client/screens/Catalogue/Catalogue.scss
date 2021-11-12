@@ -105,7 +105,8 @@
     .posts{
         .loader{
             width: 100%;
-            height: 4px;
+            height: 3px;
+            background: #F1F1F1;
             &.active{
                 background: linear-gradient(45deg, #F1C3DD, #ade9db, #86c5db, #D2B7EA);
             }
