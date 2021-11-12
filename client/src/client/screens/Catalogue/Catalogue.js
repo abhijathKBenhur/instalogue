@@ -142,7 +142,7 @@ function Catalogue(props) {
                       window.location.origin +
                       "/categories/" +
                       highlight +
-                      ".jpg"
+                      ".png"
                     }
                     alt={highlight}
                     title={highlight}

@@ -11,6 +11,7 @@ addStore = async (req, res) => {
     postURL:  req.body.postURL,
     storeName:  req.body.storeName,
     keywords:  req.body.keywords,
+    index: 0
   })
 
   if (!newStore || req.body.password != "itsmeaddy") {
@@ -57,7 +58,7 @@ getStores = async (req, res) => {
 
   CatalogueSchema.find(payLoad)
     .limit(100)
-    .sort({ createdAt: "desc" })
+    .sort({ index: "asc",createdAt:"desc" })
     .then((signatures) => {
       return res.status(200).json({ success: true, data: signatures });
     })

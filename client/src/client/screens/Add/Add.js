@@ -13,8 +13,10 @@ function Add(props) {
     postURL: "",
     thumbnailURL: "",
     storeName: "",
-    password:"",
-    keywords:""
+    password: "",
+    keywords: "",
+    fullData: "",
+    fullSheet: "",
   });
 
   const handleChange = (event) => {
@@ -26,15 +28,63 @@ function Add(props) {
   const addStore = () => {
     CatalogueInterface.addStore(form)
       .then((success) => {
+        console.log("posted");
+      })
+      .catch((err) => {
+        console.log("failed");
+      });
+  };
+
+  const setFullData = () => {
+    let payload = {
+      category: form.fullData.split("\t")[1],
+      subCategory: form.fullData.split("\t")[2],
+      postURL: "",
+      thumbnailURL: form.fullData.split("\t")[3],
+      storeName: form.fullData.split("\t")[0],
+      password: "itsmeaddy",
+      keywords: "",
+    };
+    CatalogueInterface.addStore(payload)
+      .then((success) => {
         alert("posted");
       })
       .catch((err) => {
         alert("failed");
       });
   };
+
+  const setFullSheet = () => {
+    const sheet = form.fullSheet.split("###")
+    for(let i=0 ; i<sheet.length; i++){
+      let fullData = sheet[i];
+      let payload = {
+        category: fullData.split("\t")[1],
+        subCategory: fullData.split("\t")[2],
+        postURL: "",
+        thumbnailURL: fullData.split("\t")[3],
+        storeName: fullData.split("\t")[0],
+        password: "itsmeaddy",
+        keywords: "",
+      };
+
+      CatalogueInterface.addStore(payload)
+        .then((success) => {
+          console.log("posted");
+        })
+        .catch((err) => {
+          console.log("failed");
+        });
+    }
+    
+  };
+
+  
+
   return (
     <Container className="add-form">
       <h1 className="text-center father-grey">Admin Panel </h1>
+
       <Form.Control
         placeholder="Category"
         value={form.category}
@@ -81,8 +131,44 @@ function Add(props) {
         onClick={() => {
           addStore();
         }}
+        id="submitButton"
       >
         Add store
+      </Button>
+      <br />
+      <br />
+      <br />
+      <h1>Excel Row </h1>
+      <Form.Control
+        placeholder="Full data"
+        value={form.fullData}
+        name="fullData"
+        onChange={handleChange}
+      />
+      <Button
+        onClick={() => {
+          setFullData();
+        }}
+        id="setFullDataButton"
+      >
+        Add full Data
+      </Button>
+      <br />
+      <br />
+      <h1>Excel Sheet </h1>
+      <Form.Control
+        placeholder="Full Sheet"
+        value={form.fullSheet}
+        name="fullSheet"
+        onChange={handleChange}
+      />
+      <Button
+        onClick={() => {
+          setFullSheet();
+        }}
+        id="setFullSheetButton"
+      >
+        Add full Sheet
       </Button>
     </Container>
   );
