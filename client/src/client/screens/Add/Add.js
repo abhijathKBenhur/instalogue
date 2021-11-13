@@ -61,7 +61,7 @@ function Add(props) {
       let payload = {
         category: fullData.split("\t")[1],
         subCategory: fullData.split("\t")[2],
-        postURL: "",
+        postURL: fullData.split("\t")[4],
         thumbnailURL: fullData.split("\t")[3],
         storeName: fullData.split("\t")[0],
         password: "itsmeaddy",
