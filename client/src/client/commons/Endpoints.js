@@ -1,4 +1,4 @@
-const REMOTE_ENDPOINTS = "/api";
+const REMOTE_ENDPOINTS = "https://instalogue-server.vercel.app/api";
 const LOCAL_ENDPOINTS = "http://localhost:4000/api";
 
 
