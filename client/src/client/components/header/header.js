@@ -17,14 +17,15 @@ let history = useHistory();
 
 
   return (
-    <Col className="header-container">
-      <Row className="h-100">
-        <Container className="appHeader ">
-          <span className="brand master-grey cursor-pointer" onClick={() => {goHome()}} >Instalogue.live</span>
-          {/* <div className="isntaicon">Searchbar</div> */}
-        </Container>
-      </Row>
-    </Col>
+    <Col></Col>
+    // <Col className="header-container">
+    //   <Row className="h-100">
+    //     <Container className="appHeader ">
+    //       <span className="brand master-grey cursor-pointer" onClick={() => {goHome()}} >Instalogue.live</span>
+    //       <div className="isntaicon">Searchbar</div>
+    //     </Container>
+    //   </Row>
+    // </Col>
   );
 };
 
