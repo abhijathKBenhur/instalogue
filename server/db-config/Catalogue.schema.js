@@ -3,7 +3,7 @@ const Schema = mongoose.Schema
 
 const Catalogue = new Schema(
     {
-        
+
         category: { type: String},
         subCategory: { type: String},
         thumbnailURL: { type: String },
@@ -16,4 +16,4 @@ const Catalogue = new Schema(
     { timestamps: true },
 )
 
-module.exports = mongoose.model('Catalogue', Catalogue)
+module.exports = mongoose.model('catalogues', Catalogue)
