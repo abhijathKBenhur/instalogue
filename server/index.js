@@ -37,10 +37,10 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", catalogueAPI);
-app.get("/", (req, res) => {
-  res.send("Instalogue server is up");
-});
 
+app.get("/",(req,res) =>{
+  res.status(200).json("Instalogue Server is up!")
+})
 
 if (process.env.NODE_ENV == "production") {
   console.log("Found node environment as" + process.env.NODE_ENV , __dirname);
