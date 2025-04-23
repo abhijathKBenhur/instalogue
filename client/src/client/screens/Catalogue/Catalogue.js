@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Row, Col, Container, Image } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import logo from "../../../assets/logo/logo.jpg";
+import logo from "../../../assets/logo/instalogue_logo.png";
 import "./Catalogue.scss";
 import CatalogueInterface from "../../interface/CatalogueInterface";
 import Post from ".././../components/Post/Post";
@@ -84,7 +84,7 @@ function Catalogue(props) {
             ></Image>
           </div>
           <div className="pageName second-grey">Instalogue</div>
-          <div className="pageDesc second-grey mt-1">Catalogue for Instastores</div>
+          <div className="pageDesc second-grey mt-1">Catalogue for Instagram stores</div>
         </div>
         <div className="profile-stats-desc">
           {/* <div className="stats">

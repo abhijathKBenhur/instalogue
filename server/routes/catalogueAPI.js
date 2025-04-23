@@ -10,7 +10,7 @@ addStore = async (req, res) => {
     thumbnailURL:  req.body.thumbnailURL,
     postURL:  req.body.postURL,
     storeName:  req.body.storeName,
-    keywords:  req.body.keywords,
+    keywords:  req.body.keywords.split(","),
     index: 0
   })
 

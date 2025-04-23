@@ -1,7 +1,6 @@
 import _ from "lodash";
 import { Row, Form, Container, Button } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import logo from "../../../assets/logo/logo.jpg";
 import "./Add.scss";
 import CatalogueInterface from "../../interface/CatalogueInterface";
 import Post from ".././../components/Post/Post";
@@ -43,7 +42,7 @@ function Add(props) {
       thumbnailURL: form.fullData.split("\t")[3],
       storeName: form.fullData.split("\t")[0],
       password: "itsmeaddy",
-      keywords: "",
+      keywords: form.fullData.split("\t")[5],
     };
     CatalogueInterface.addStore(payload)
       .then((success) => {
@@ -65,7 +64,7 @@ function Add(props) {
         thumbnailURL: fullData.split("\t")[3],
         storeName: fullData.split("\t")[0],
         password: "itsmeaddy",
-        keywords: "",
+        keywords: form.fullData.split("\t")[5],
       };
 
       CatalogueInterface.addStore(payload)
