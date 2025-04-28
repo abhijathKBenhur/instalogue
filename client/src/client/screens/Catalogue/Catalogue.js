@@ -19,18 +19,18 @@ function Catalogue(props) {
   const [isLoading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
 
+  useEffect(() => {
+    setSelectedSubCategory(undefined)
+  }, [selectedCategory]);
 
 
   useEffect(() => {
     reloadStores();
-    if(selectedCategory){
-      loadSubCategories(selectedCategory)
-    }else{
-      setSelectedSubCategory(undefined)
-      setAvailableSubCategories([])
-    }
-  }, [selectedCategory, searchString, selectedSubCategory]);
+  }, [selectedSubCategory]);
 
+  useEffect(() => {
+    reloadStores();
+  }, [searchString]);
 
   useEffect(() => {
     loadCategories();
@@ -100,10 +100,9 @@ function Catalogue(props) {
           </div> */}
           <div className="description second-grey">
             <span>
-              Instagram is now home for numerous online stores with wonderful
-              and vivid collection of products. Instalogue gathers them and provide better discoverability for the products
-              to increase choice for the users. Tap on highlights to
-              filter. Happy browsing.
+              Instagram is home for numerous pages as stores with wonderful
+              and vivid collection of products. Instalogue gathers them and provide better discoverability of these pages and products.
+              Tap on highlights to filter. Happy shopping.
             </span>
             {/* While providing discoverability for online stores, instalogue aims at providing an online shopping mall experience. */}
           </div>
