@@ -21,16 +21,12 @@ function Catalogue(props) {
 
   useEffect(() => {
     setSelectedSubCategory(undefined)
+    loadSubCategories(selectedCategory)
   }, [selectedCategory]);
 
-
   useEffect(() => {
     reloadStores();
-  }, [selectedSubCategory]);
-
-  useEffect(() => {
-    reloadStores();
-  }, [searchString]);
+  }, [selectedCategory, selectedSubCategory, searchString]);
 
   useEffect(() => {
     loadCategories();
@@ -189,10 +185,6 @@ function Catalogue(props) {
               value={searchString}
               onChange={(e) => {
                 setSearchString(e.target.value);
-                clearTimeout(window.searchTimeout);
-                window.searchTimeout = setTimeout(() => {
-                  reloadStores();
-                }, 500);
               }}
             />
             {searchString && (

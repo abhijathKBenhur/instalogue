@@ -51,7 +51,7 @@ getStores = async (req, res) => {
   if(selectedSubCategory) {
     payLoad.subCategory = selectedSubCategory;
   }
-  if (searchString) {
+  if (searchString?.length > 0) {
     searchOrArray.push(
       { category: { $regex: new RegExp(searchString, "i") } },
       { subCategory: { $regex: new RegExp(searchString, "i") } },
