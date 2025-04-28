@@ -159,7 +159,7 @@ function Catalogue(props) {
           );
         })}
       </div>
-      <div className="subcategories mt-3">
+      {availableSubCategories.length > 0 && <div className="subcategories mt-3">
         {availableSubCategories.map((subCategory) => {
           // Generate random background color
           const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
@@ -181,7 +181,7 @@ function Catalogue(props) {
           onClick={() => {selectedSubCategory == subCategory ? setSelectedSubCategory(undefined) : setSelectedSubCategory(subCategory)}}
           >{subCategory}</div>;
         })}
-      </div>
+      </div>}
       <div className="search-container mt-3 mb-3">
         <div className="search-bar">
           <i className="fa fa-search search-icon"></i>
