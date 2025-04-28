@@ -5,6 +5,7 @@ import logo from "../../../assets/logo/instalogue_logo.png";
 import "./Catalogue.scss";
 import CatalogueInterface from "../../interface/CatalogueInterface";
 import Post from ".././../components/Post/Post";
+import { Skeleton } from "@mui/material";
 
 function Catalogue(props) {
   const [searchString, setSearchString] = useState("");
@@ -18,6 +19,7 @@ function Catalogue(props) {
 
   const [isLoading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [isLoadingCategories, setLoadingCategories] = useState(true);
 
   useEffect(() => {
     setSelectedSubCategory(undefined)
@@ -33,9 +35,11 @@ function Catalogue(props) {
   }, []);
 
   const loadCategories = () => {
+    setLoadingCategories(true);
     CatalogueInterface.getCategories().then((categories) => {
       let categoryList = _.get(categories, "data.data");
-      setAvailableCategories(categoryList)
+      setAvailableCategories(categoryList);
+      setLoadingCategories(false);
     });
   };
 
@@ -105,51 +109,63 @@ function Catalogue(props) {
         </div>
       </div>
       <div className="highlight-filters mt-5">
-        {availableCategories.map((highlight) => {
-          return (
-            <div>
-              <div
-                className="highlight"
-                className={
-                  highlight == selectedCategory ? "selected" : ""
-                }
-                onClick={() => {
-                  selectedCategory == highlight
-                    ? setSelectedCategory(undefined)
-                    : setSelectedCategory(highlight);
-                }}
-              >
-                <div
-                  className={
-                    highlight == selectedCategory
-                      ? "selected highlight-container cursor-pointer"
-                      : "highlight-container cursor-pointer"
-                  }
-                >
-                  <Image
-                    roundedCircle
-                    src={
-                      window.location.origin +
-                      "/categories/" +
-                      highlight +
-                      ".png"
-                    }
-                    title={highlight}
-                  ></Image>
+        {isLoadingCategories ? (
+          Array(10).fill(0).map((_, index) => (
+            <div key={index}>
+              <div className="highlight">
+                <div className="highlight-container cursor-pointer">
+                  <Skeleton variant="circular" width={80} height={80} />
                 </div>
               </div>
-              <div
-                className={
-                  highlight == selectedCategory
-                    ? "selected highlight-key mt-1"
-                    : "highlight-key mt-1"
-                }
-              >
-                <span className="second-header">{highlight}</span>
+              <div className="highlight-key mt-1">
+                <Skeleton variant="text" width={100} height={20} />
               </div>
             </div>
-          );
-        })}
+          ))
+        ) : (
+          availableCategories.map((highlight) => {
+            return (
+              <div key={highlight}>
+                <div
+                  className={`highlight ${highlight === selectedCategory ? "selected" : ""}`}
+                  onClick={() => {
+                    selectedCategory === highlight
+                      ? setSelectedCategory(undefined)
+                      : setSelectedCategory(highlight);
+                  }}
+                >
+                  <div
+                    className={
+                      highlight === selectedCategory
+                        ? "selected highlight-container cursor-pointer"
+                        : "highlight-container cursor-pointer"
+                    }
+                  >
+                    <Image
+                      roundedCircle
+                      src={
+                        window.location.origin +
+                        "/categories/" +
+                        highlight +
+                        ".png"
+                      }
+                      title={highlight}
+                    ></Image>
+                  </div>
+                </div>
+                <div
+                  className={
+                    highlight === selectedCategory
+                      ? "selected highlight-key mt-1"
+                      : "highlight-key mt-1"
+                  }
+                >
+                  <span className="second-header">{highlight}</span>
+                </div>
+              </div>
+            );
+          })
+        )}
       </div>
       {availableSubCategories.length > 0 && <div className="subcategories mt-3">
         {availableSubCategories.map((subCategory) => {
@@ -214,13 +230,22 @@ function Catalogue(props) {
       <div className="posts mt-1">
         <div className={isLoading ? "loader active" : "loader" }></div>
         <Row>
-          {posts.map((post) => {
-            return (
-              <Col md="4" sm="4" lg="4" xs="4" className="p-2">
-                <Post postinfo={post}></Post>
+          {isLoading ? (
+            // Show 9 skeleton loaders while loading
+            Array(9).fill(0).map((_, index) => (
+              <Col key={index} md="4" sm="4" lg="4" xs="4" className="p-2">
+                <Skeleton variant="rectangular" height={200} />
               </Col>
-            );
-          })}
+            ))
+          ) : (
+            posts.map((post) => {
+              return (
+                <Col md="4" sm="4" lg="4" xs="4" className="p-2">
+                  <Post postinfo={post}></Post>
+                </Col>
+              );
+            })
+          )}
         </Row>
       </div>
     </Container>

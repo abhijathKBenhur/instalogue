@@ -4,9 +4,12 @@
   "description": "Ideas on Blockchain",
   "author": "abhijathkbenhur@gmail.com",
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.10.6",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
+    "@mui/icons-material": "^5.15.11",
     "axios": "^1.8.4",
     "babel-polyfill": "6.26.0",
     "babel-preset-env": "^0.0.0",
