@@ -142,7 +142,6 @@ function Catalogue(props) {
                       highlight +
                       ".png"
                     }
-                    alt={highlight}
                     title={highlight}
                   ></Image>
                 </div>
@@ -162,7 +161,18 @@ function Catalogue(props) {
       </div>
       <div className="subcategories mt-3">
         {availableSubCategories.map((subCategory) => {
+          // Generate random background color
+          const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
+          
+          // Calculate contrasting text color based on background brightness
+          const r = parseInt(randomColor.slice(1,3), 16);
+          const g = parseInt(randomColor.slice(3,5), 16);
+          const b = parseInt(randomColor.slice(5,7), 16);
+          const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+          const textColor = brightness > 128 ? '#000000' : '#FFFFFF';
+
           return <div
+          // style={{backgroundColor: randomColor, color: textColor}}
           className={
             subCategory == selectedSubCategory
               ? "selected sub-category second-grey"
@@ -171,6 +181,27 @@ function Catalogue(props) {
           onClick={() => {selectedSubCategory == subCategory ? setSelectedSubCategory(undefined) : setSelectedSubCategory(subCategory)}}
           >{subCategory}</div>;
         })}
+      </div>
+      <div className="search-container mt-3 mb-3">
+        <div className="search-bar">
+          <i className="fa fa-search search-icon"></i>
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search for product / category /stores etc"
+            value={searchString}
+            onChange={(e) => {
+              setSearchString(e.target.value);
+              clearTimeout(window.searchTimeout);
+              window.searchTimeout = setTimeout(() => {
+                reloadStores();
+              }, 500);
+            }}
+          />
+        </div>
+      </div>
+      <div className="posts-container">
+        
       </div>
       <div className="posts mt-1">
         <div className={isLoading ? "loader active" : "loader" }></div>

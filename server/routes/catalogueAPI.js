@@ -43,28 +43,26 @@ getStores = async (req, res) => {
   let selectedSubCategory = req.body.selectedSubCategory;
   let searchString = req.body.searchString;
   let searchOrArray = [];
-  let payLoad = {
-  };
+  let payLoad = {};
 
-  // if (selectedCategory) {
-  //   searchOrArray.push({ category: { $regex: new RegExp(selectedCategory, "i") } });
-  // }
-  // if (searchString) {
-  //   searchOrArray.push({ title: { $regex: new RegExp(searchString, "i") } });
-  // }
   if (selectedCategory) {
-    payLoad.category = selectedCategory
+    payLoad.category = selectedCategory;
   }
-  if(selectedSubCategory){
-    payLoad.subCategory = selectedSubCategory
+  if(selectedSubCategory) {
+    payLoad.subCategory = selectedSubCategory;
   }
-  if (searchOrArray.length > 0) {
+  if (searchString) {
+    searchOrArray.push(
+      { category: { $regex: new RegExp(searchString, "i") } },
+      { subCategory: { $regex: new RegExp(searchString, "i") } },
+      { storeName: { $regex: new RegExp(searchString, "i") } }
+    );
     payLoad.$or = searchOrArray;
   }
 
   CatalogueSchema.find(payLoad)
     .limit(100)
-    .sort({ index: "asc",createdAt:"desc" })
+    .sort({ index: "asc", createdAt: "desc" })
     .then((signatures) => {
       return res.status(200).json({ success: true, data: signatures });
     })

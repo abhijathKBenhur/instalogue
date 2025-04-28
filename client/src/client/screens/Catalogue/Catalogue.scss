@@ -62,7 +62,7 @@
         overflow: auto;
         .sub-category{
             border: 1px solid #DBDBDB;
-            border-radius: 3px;
+            border-radius: 8px;
             padding: 2px 7px;
             height: 24px;
             cursor: pointer;
@@ -74,6 +74,33 @@
             white-space: nowrap;
         }
     }
+
+    .search-container {
+        width: 100%;
+        .search-bar {
+            position: relative;
+            width: 100%;
+            .search-icon {
+                position: absolute;
+                left: 15px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: $grey-dark;
+            }
+            .search-input {
+                border-radius: 8px;
+                width: 100%;
+                padding: 12px 20px 12px 45px;
+                border: 1px solid #DBDBDB;
+                font-size: 14px;
+                &:focus {
+                    outline: none;
+                    border-color: $primary;
+                }
+            }
+        }
+    }
+
     .highlight-filters{
         display: flex;
         overflow: auto;
