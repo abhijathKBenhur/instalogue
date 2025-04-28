@@ -104,9 +104,8 @@ function Catalogue(props) {
           <div className="description second-grey">
             <span>
               Instagram is now home for numerous online stores with wonderful
-              and vivid collection of products. Instalogue targets to index
-              these pages and provide better discoverability for the products
-              and increased choice for the consumers. Tap on highlights to
+              and vivid collection of products. Instalogue gathers them and provide better discoverability for the products
+              to increase choice for the users. Tap on highlights to
               filter. Happy browsing.
             </span>
             {/* While providing discoverability for online stores, instalogue aims at providing an online shopping mall experience. */}

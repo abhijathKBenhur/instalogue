@@ -10,7 +10,7 @@ addStore = async (req, res) => {
     thumbnailURL:  req.body.thumbnailURL,
     postURL:  req.body.postURL,
     storeName:  req.body.storeName,
-    keywords:  req?.body?.keywords?.split(","),
+    keywords: (!req?.body?.keywords || req?.body?.keywords === '') ? [] : req?.body?.keywords?.split(","),
     index: 0
   })
 
@@ -27,6 +27,7 @@ addStore = async (req, res) => {
       });
     })
     .catch((error) => {
+      console.log(error)
       return res.status(400).json({
         error,
         message: "New store not posted!",

@@ -49,6 +49,7 @@ function Add(props) {
         alert("posted");
       })
       .catch((err) => {
+        console.log(err)
         alert("failed");
       });
   };
@@ -67,6 +68,7 @@ function Add(props) {
         keywords: form.fullData.split("\t")[5],
       };
 
+      console.log(payload)
       CatalogueInterface.addStore(payload)
         .then((success) => {
           console.log("posted");

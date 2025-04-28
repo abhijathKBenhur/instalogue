@@ -9,7 +9,7 @@ const Catalogue = new Schema(
         thumbnailURL: { type: String },
         postURL: { type: String },
         storeName: { type: String},
-        keywords: { type: String},
+        keywords: { type: [String]},
         index:{type: Number}
         
     },
