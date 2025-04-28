@@ -19,9 +19,6 @@ function Catalogue(props) {
   const [isLoading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    reloadStores();
-  }, [selectedSubCategory]);
 
 
   useEffect(() => {
@@ -32,7 +29,7 @@ function Catalogue(props) {
       setSelectedSubCategory(undefined)
       setAvailableSubCategories([])
     }
-  }, [selectedCategory]);
+  }, [selectedCategory, searchString, selectedSubCategory]);
 
 
   useEffect(() => {
@@ -185,19 +182,39 @@ function Catalogue(props) {
       <div className="search-container mt-3 mb-3">
         <div className="search-bar">
           <i className="fa fa-search search-icon"></i>
-          <input
-            type="text"
-            className="search-input"
-            placeholder="Search for product / category /stores etc"
-            value={searchString}
-            onChange={(e) => {
-              setSearchString(e.target.value);
-              clearTimeout(window.searchTimeout);
-              window.searchTimeout = setTimeout(() => {
-                reloadStores();
-              }, 500);
-            }}
-          />
+          <div style={{position: 'relative', width: '100%'}}>
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search across products, categories, stores etc"
+              value={searchString}
+              onChange={(e) => {
+                setSearchString(e.target.value);
+                clearTimeout(window.searchTimeout);
+                window.searchTimeout = setTimeout(() => {
+                  reloadStores();
+                }, 500);
+              }}
+            />
+            {searchString && (
+              <button
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer'
+                }}
+                onClick={() => {
+                  setSearchString('');
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="posts-container">

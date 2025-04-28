@@ -55,9 +55,11 @@ function Add(props) {
   };
 
   const setFullSheet = () => {
+    console.log(form.fullSheet)
     const sheet = form.fullSheet.split("###")
+    console.log(sheet)
     for(let i=0 ; i<sheet.length; i++){
-      let fullData = sheet[i];
+      let fullData = sheet[i].trim();
       let payload = {
         category: fullData.split("\t")[1],
         subCategory: fullData.split("\t")[2],
@@ -65,7 +67,7 @@ function Add(props) {
         thumbnailURL: fullData.split("\t")[3],
         storeName: fullData.split("\t")[0],
         password: "itsmeaddy",
-        keywords: form.fullData.split("\t")[5],
+        keywords: fullData.split("\t")[5],
       };
 
       console.log(payload)
