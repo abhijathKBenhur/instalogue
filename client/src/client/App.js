@@ -22,7 +22,7 @@ const App = () => {
         <div className="app-content">
           <Switch>
             <Route path="/home" render={(props) => <Catalogue />} />
-            <Route path="/itsmelee" render={(props) => <Add />} />
+            <Route path="/adminPanel" render={(props) => <Add />} />
             <Route path="/" render={(props) => <Catalogue />} />
             <Route/>
           </Switch>
