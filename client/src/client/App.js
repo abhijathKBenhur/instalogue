@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import "./App.scss";
 
 import Catalogue from "./screens/Catalogue/Catalogue";
-import Add from "./screens/Add/Add";
+import Admin from "./screens/Admin/Admin";
 import {
   BrowserRouter as Router,
   Route,
@@ -22,7 +22,7 @@ const App = () => {
         <div className="app-content">
           <Switch>
             <Route path="/home" render={(props) => <Catalogue />} />
-            <Route path="/adminPanel" render={(props) => <Add />} />
+            <Route path="/admin" render={(props) => <Admin />} />
             <Route path="/" render={(props) => <Catalogue />} />
             <Route/>
           </Switch>
