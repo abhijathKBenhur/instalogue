@@ -39,6 +39,11 @@ addStore = async (req, res) => {
 
 
 getStores = async (req, res) => {
+  // Password check for admin
+  console.log(req.body.password)
+  // if (req.body.password !== "itsmeaddy") {
+  //   return res.status(401).json({ success: false, error: "Invalid admin password" });
+  // }
   let selectedCategory = req.body.selectedCategory;
   let selectedSubCategory = req.body.selectedSubCategory;
   let searchString = req.body.searchString;
@@ -94,6 +99,23 @@ getSubCategories = async (req, res) => {
         return res.status(200).json({ success: true, data: subCategories });
       }
     })
+};
+
+deleteStore = async (req, res) => {
+  const { id, password } = req.body;
+  if (!id || password !== "itsmeaddy") {
+    return res.status(400).json({ success: false, error: "Invalid request" });
+  }
+  try {
+    const result = await CatalogueSchema.deleteOne({ _id: id });
+    if (result.deletedCount === 1) {
+      return res.status(200).json({ success: true, message: "Store deleted!" });
+    } else {
+      return res.status(404).json({ success: false, error: "Store not found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ success: false, error: error.message });
+  }
 };
 
 router.post("/getStores", getStores);
