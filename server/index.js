@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const catalogueAPI = require("./routes/catalogueAPI");
+const adminAPI = require("./routes/adminAPI");
 const dotenv = require("dotenv");
 const path = require("path");
 
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", catalogueAPI);
+app.use("/api", adminAPI);
 
 app.get("/", (req, res) => {
   res.status(200).json("Instalogue Server is up!");

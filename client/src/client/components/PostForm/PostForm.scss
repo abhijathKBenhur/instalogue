@@ -3,7 +3,12 @@
     flex-direction: column;
     gap: 20px;
     .btn{
+        border: 1px solid #DEE2E6 !important;
         &:focus{
+            color: black;
+        }
+        &:hover{
+            background-color: white;
             color: black;
         }
     }

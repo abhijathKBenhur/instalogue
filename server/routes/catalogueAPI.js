@@ -39,11 +39,6 @@ addStore = async (req, res) => {
 
 
 getStores = async (req, res) => {
-  // Password check for admin
-  console.log(req.body.password)
-  // if (req.body.password !== "itsmeaddy") {
-  //   return res.status(401).json({ success: false, error: "Invalid admin password" });
-  // }
   let selectedCategory = req.body.selectedCategory;
   let selectedSubCategory = req.body.selectedSubCategory;
   let searchString = req.body.searchString;

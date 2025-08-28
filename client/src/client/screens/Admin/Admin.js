@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Container, Spinner } from "react-bootstrap";
-import CatalogueInterface from "../../interface/CatalogueInterface";
+import AdminInterface from "../../interface/AdminInterface";
 import "./Admin.scss";
 import PostForm from "../../components/PostForm/PostForm";
 import { useHistory } from "react-router-dom";
@@ -31,23 +31,19 @@ function Admin() {
   const [adminPassword, setAdminPassword] = useState("");
   const [adminError, setAdminError] = useState("");
 
-  useEffect(() => {
-    if (!adminVerified) return;
-    setLoading(true);
-    CatalogueInterface.getStores({ password: adminPassword })
+  const authenticate = () =>{
+    AdminInterface.authenticate({ password: adminPassword })
       .then((res) => {
-        setStores(res.data.data || []);
-        setLoading(false);
+        setAdminVerified(true);
       })
       .catch((err) => {
-        setLoading(false);
         if (err?.response?.status === 401) {
           setAdminVerified(false);
           setAdminError("Session expired or invalid password. Please login again.");
           setAdminPassword("");
         }
       });
-  }, [refresh, adminVerified]);
+  }
 
   if (!adminVerified) {
     return (
@@ -62,7 +58,7 @@ function Admin() {
             onChange={e => setAdminPassword(e.target.value)}
             autoFocus
           />
-          <Button type="submit" variant="primary"  className="w-100" onClick={() => { setRefresh((r) => !r); setAdminVerified(true) }}>
+          <Button type="submit" variant="primary"  className="w-100" onClick={authenticate}>
             { "Login"}
           </Button>
       </Container>
