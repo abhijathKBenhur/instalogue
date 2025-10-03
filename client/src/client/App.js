@@ -1,5 +1,6 @@
 import _ from "lodash";
 import React, { Component } from "react";
+import { Container } from "react-bootstrap";
 import "./App.scss";
 
 import Catalogue from "./screens/Catalogue/Catalogue";
@@ -17,7 +18,7 @@ import Header from "./components/header/header";
 const App = () => {
   return (
     <Router>
-      <div className="appContainer">
+      <Container className="appContainer">
         <Header></Header>
         <div className="app-content">
           <Switch>
@@ -27,7 +28,7 @@ const App = () => {
             <Route/>
           </Switch>
         </div>
-      </div>
+      </Container>
     </Router>
   );
 };

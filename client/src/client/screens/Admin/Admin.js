@@ -47,7 +47,7 @@ function Admin() {
 
   if (!adminVerified) {
     return (
-      <Container className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '60vh' }}>
+      <div className="d-flex flex-column align-items-center justify-content-center" style={{ minHeight: '60vh' }}>
        
         <h2 className="mb-3">Admin Panel Login</h2>
           <input
@@ -61,7 +61,7 @@ function Admin() {
           <Button type="submit" variant="primary"  className="w-100" onClick={authenticate}>
             { "Login"}
           </Button>
-      </Container>
+      </div>
     );
   }
 

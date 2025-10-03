@@ -6,10 +6,12 @@
   -ms-overflow-style: none; /* Internet Explorer 10+ */
   scrollbar-width: none; /* Firefox */
   -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
   .app-content{
-    position: absolute;
-    width: 100%;
-    top: 20px;
+    // position: absolute;
+    // width: 100%;
+    // top: 20px;
   }
 
 }

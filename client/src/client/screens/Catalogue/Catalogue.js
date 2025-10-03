@@ -1,113 +1,97 @@
 import _ from "lodash";
 import { Row, Col, Container, Image } from "react-bootstrap";
-import React, { useState, useEffect } from "react";
-import logo from "../../../assets/logo/instalogue_logo.png";
+import React, { useState, useEffect, useMemo } from "react";
 import "./Catalogue.scss";
 import CatalogueInterface from "../../interface/CatalogueInterface";
 import Post from ".././../components/Post/Post";
 import { Skeleton } from "@mui/material";
+import Header from "../../components/header/header";
 
 function Catalogue(props) {
   const [searchString, setSearchString] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(undefined);
   const [selectedSubCategory, setSelectedSubCategory] = useState(undefined);
 
-
   const [availableCategories, setAvailableCategories] = useState([]);
   const [availableSubCategories, setAvailableSubCategories] = useState([]);
-
 
   const [isLoading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [isLoadingCategories, setLoadingCategories] = useState(true);
 
-  useEffect(() => {
-    setSelectedSubCategory(undefined)
-    loadSubCategories(selectedCategory)
-  }, [selectedCategory]);
+  // Memoized debounced reload function
+  const debouncedReloadStores = useMemo(
+    () =>
+      _.debounce((params) => {
+        reloadStores(params);
+      }, 300),
+    []
+  );
 
+  // Initial load for categories
   useEffect(() => {
-    reloadStores();
-  }, [selectedCategory, selectedSubCategory, searchString]);
-
-  useEffect(() => {
-    loadCategories();
+    (async () => {
+      setLoadingCategories(true);
+      try {
+        const categories = await CatalogueInterface.getCategories();
+        setAvailableCategories(_.get(categories, "data.data", []));
+      } finally {
+        setLoadingCategories(false);
+      }
+    })();
   }, []);
 
-  const loadCategories = () => {
-    setLoadingCategories(true);
-    CatalogueInterface.getCategories().then((categories) => {
-      let categoryList = _.get(categories, "data.data");
-      setAvailableCategories(categoryList);
-      setLoadingCategories(false);
-    });
-  };
+  // Handle category + subcategory loading
+  useEffect(() => {
+    if (!selectedCategory) {
+      setAvailableSubCategories([]);
+      setSelectedSubCategory(undefined);
+      return;
+    }
 
-  const loadSubCategories = (category) => {
-    setSelectedSubCategory(undefined)
-    if (category || selectedCategory) {
-      CatalogueInterface.getSubCategories({
-        category: category || selectedCategory,
-      }).then((subCategories) => {
-        setAvailableSubCategories(subCategories.data.data)
+    (async () => {
+      const subCategories = await CatalogueInterface.getSubCategories({
+        category: selectedCategory,
       });
+      setAvailableSubCategories(_.get(subCategories, "data.data", []));
+      setSelectedSubCategory(undefined);
+    })();
+  }, [selectedCategory]);
+
+  // Handle search, category, subcategory -> store loading
+  useEffect(() => {
+    const params = {
+      searchString,
+      selectedCategory,
+      selectedSubCategory,
+    };
+
+    if (searchString) {
+      debouncedReloadStores(params);
+    } else {
+      reloadStores(params); // immediate reload when search is cleared
+    }
+
+    return () => debouncedReloadStores.cancel();
+  }, [searchString, selectedCategory, selectedSubCategory]);
+
+  // Reload stores function
+  const reloadStores = async ({ searchString, selectedCategory, selectedSubCategory }) => {
+    setLoading(true);
+    try {
+      const results = await CatalogueInterface.getStores({
+        searchString,
+        selectedCategory,
+        selectedSubCategory,
+      });
+      setPosts(_.get(results, "data.data", []));
+    } finally {
+      setLoading(false);
     }
   };
 
-
-  const reloadStores = () => {
-    setLoading(true);
-    CatalogueInterface.getStores({
-      searchString: searchString,
-      selectedCategory: selectedCategory,
-      selectedSubCategory: selectedSubCategory,
-    }).then((results) => {
-      setLoading(false);
-      setPosts(_.get(results, "data.data"));
-    });
-  };
-
   return (
-    <Container className="catalogue">
-      <div className="page-header d-flex">
-        <div className="profile-image-name">
-          <div>
-            <Image
-              className="brand"
-              roundedCircle
-              src={logo}
-              width="120rem"
-              height="120rem"
-            ></Image>
-          </div>
-          <div className="pageName second-grey">Instalogue</div>
-          <div className="pageDesc second-grey mt-1">Catalogue for Instagram stores</div>
-        </div>
-        <div className="profile-stats-desc">
-          {/* <div className="stats">
-            <div className="stat-entry">
-              <span className="stat-count">{storeCount}</span>
-              <span className="stat-value third-header">Stores</span>
-            </div>
-            <div className="stat-entry">
-              <span className="stat-count">102</span>
-              <span className="stat-value third-header">followers</span>
-            </div>
-            <div className="stat-entry">
-              <span className="stat-count">102</span>
-              <span className="stat-value third-header">followers</span>
-            </div>
-          </div> */}
-          <div className="description second-grey">
-            <span>
-              Instagram is home for numerous pages as stores with wonderful
-              and vivid collection of products. Instalogue gathers them and provide better discoverability of these pages and products.
-              Tap on highlights to filter. Happy shopping.
-            </span>
-            {/* While providing discoverability for online stores, instalogue aims at providing an online shopping mall experience. */}
-          </div>
-        </div>
-      </div>
+    <div className="catalogue">
       <div className="highlight-filters mt-5">
         {isLoadingCategories ? (
           Array(10).fill(0).map((_, index) => (
@@ -256,7 +240,7 @@ function Catalogue(props) {
           )}
         </Row>
       </div>
-    </Container>
+    </div>
   );
 }
 
