@@ -42,6 +42,8 @@ getStores = async (req, res) => {
   let selectedCategory = req.body.selectedCategory;
   let selectedSubCategory = req.body.selectedSubCategory;
   let searchString = req.body.searchString;
+  let limit = parseInt(req.body.limit) || 9; // Default to 9 posts per page
+  let offset = parseInt(req.body.offset) || 0;
   let searchOrArray = [];
   let payLoad = {};
 
@@ -61,7 +63,8 @@ getStores = async (req, res) => {
   }
 
   CatalogueSchema.find(payLoad)
-    .limit(100)
+    .skip(offset)
+    .limit(limit)
     .sort({ index: "asc", createdAt: "desc" })
     .then((signatures) => {
       return res.status(200).json({ success: true, data: signatures });

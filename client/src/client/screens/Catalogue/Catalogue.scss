@@ -109,5 +109,15 @@
                 width: 100%;
             }
         }
+        .loading-container {
+            margin-top: 20px;
+            
+            .end-message {
+                text-align: center;
+                padding: 20px;
+                color: #666;
+                font-size: 14px;
+            }
+        }
     }
 }

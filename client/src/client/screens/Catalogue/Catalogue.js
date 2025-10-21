@@ -1,11 +1,12 @@
 import _ from "lodash";
-import { Row, Col, Container, Image } from "react-bootstrap";
-import React, { useState, useEffect, useMemo } from "react";
+import { Row, Col, Image } from "react-bootstrap";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import "./Catalogue.scss";
 import CatalogueInterface from "../../interface/CatalogueInterface";
 import Post from ".././../components/Post/Post";
 import { Skeleton } from "@mui/material";
-import Header from "../../components/header/header";
+// import Header from "../../components/header/header";
+import useViewportCalculator from "../../hooks/useViewportCalculator";
 
 function Catalogue(props) {
   const [searchString, setSearchString] = useState("");
@@ -18,15 +19,47 @@ function Catalogue(props) {
   const [isLoading, setLoading] = useState(false);
   const [posts, setPosts] = useState([]);
   const [isLoadingCategories, setLoadingCategories] = useState(true);
+  
+  // Pagination state
+  const [hasMore, setHasMore] = useState(true);
+  const { postsPerPage } = useViewportCalculator();
+  const loadingRef = useRef(null); // Reference for intersection observer
+  const isFetchingRef = useRef(false); // Guards against duplicate loads
+  const lastQueryKeyRef = useRef(null); // Deduplicate effect-triggered fetches
+  const enableInfiniteScrollRef = useRef(false); // Only load more after user scrolls
 
-  // Memoized debounced reload function
-  const debouncedReloadStores = useMemo(
-    () =>
-      _.debounce((params) => {
-        reloadStores(params);
-      }, 300),
-    []
+  // Reload stores function (stable)
+  const reloadStores = useCallback(
+    async ({ searchString, selectedCategory, selectedSubCategory, offset = 0, append = false }) => {
+      isFetchingRef.current = true;
+      setLoading(true);
+      try {
+        const results = await CatalogueInterface.getStores({
+          searchString,
+          selectedCategory,
+          selectedSubCategory,
+          limit: postsPerPage,
+          offset,
+        });
+
+        const newPosts = _.get(results, "data.data", []);
+        setHasMore(newPosts.length === postsPerPage);
+
+        if (append) {
+          setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+        } else {
+          setPosts(newPosts);
+        }
+      } finally {
+        setLoading(false);
+        isFetchingRef.current = false;
+      }
+    },
+    [postsPerPage]
   );
+
+  // Memoized debounced reload function (uses latest reloadStores)
+  const debouncedReloadStores = useMemo(() => _.debounce(reloadStores, 300), [reloadStores]);
 
   // Initial load for categories
   useEffect(() => {
@@ -58,37 +91,92 @@ function Catalogue(props) {
     })();
   }, [selectedCategory]);
 
-  // Handle search, category, subcategory -> store loading
+  // Intersection Observer setup for infinite scroll
+  const onIntersect = useCallback(
+    (entries) => {
+      const [entry] = entries;
+      // Only append more when we already have some posts to avoid double initial load
+      if (
+        entry.isIntersecting &&
+        hasMore &&
+        !isLoading &&
+        !isFetchingRef.current &&
+        posts.length > 0 &&
+        enableInfiniteScrollRef.current
+      ) {
+        reloadStores({
+          searchString,
+          selectedCategory,
+          selectedSubCategory,
+          offset: posts.length,
+          append: true,
+        });
+      }
+    },
+    [hasMore, isLoading, reloadStores, searchString, selectedCategory, selectedSubCategory, posts.length]
+  );
+
   useEffect(() => {
+    // Enable infinite scroll only after the user has scrolled/interacted
+    const enable = () => {
+      enableInfiniteScrollRef.current = true;
+      // Remove listeners after first interaction
+      window.removeEventListener('scroll', enable);
+      window.removeEventListener('wheel', enable);
+      window.removeEventListener('touchmove', enable);
+    };
+    window.addEventListener('scroll', enable, { passive: true });
+    window.addEventListener('wheel', enable, { passive: true });
+    window.addEventListener('touchmove', enable, { passive: true });
+
+    const observer = new IntersectionObserver(onIntersect, { threshold: 0.1 });
+    const currentLoader = loadingRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+    return () => {
+      window.removeEventListener('scroll', enable);
+      window.removeEventListener('wheel', enable);
+      window.removeEventListener('touchmove', enable);
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+      observer.disconnect();
+    };
+  }, [onIntersect]);
+
+  // Handle search, category, subcategory -> store loading (single source of truth)
+  useEffect(() => {
+    const currentKey = JSON.stringify({ s: searchString || "", c: selectedCategory || "", sc: selectedSubCategory || "" });
+    if (currentKey === lastQueryKeyRef.current) {
+      return; // No change in criteria; avoid duplicate calls (e.g., StrictMode/effect identity changes)
+    }
+    lastQueryKeyRef.current = currentKey;
+
+    // Reset pagination state when search criteria changes
+    setPosts([]);
+    setHasMore(true);
+
     const params = {
       searchString,
       selectedCategory,
       selectedSubCategory,
+      offset: 0,
+      append: false,
     };
 
     if (searchString) {
       debouncedReloadStores(params);
-    } else {
-      reloadStores(params); // immediate reload when search is cleared
+      return () => debouncedReloadStores.cancel();
     }
 
+    reloadStores(params);
+  }, [searchString, selectedCategory, selectedSubCategory, reloadStores, debouncedReloadStores]);
+
+  // Cleanup debounced function on unmount
+  useEffect(() => {
     return () => debouncedReloadStores.cancel();
-  }, [searchString, selectedCategory, selectedSubCategory]);
-
-  // Reload stores function
-  const reloadStores = async ({ searchString, selectedCategory, selectedSubCategory }) => {
-    setLoading(true);
-    try {
-      const results = await CatalogueInterface.getStores({
-        searchString,
-        selectedCategory,
-        selectedSubCategory,
-      });
-      setPosts(_.get(results, "data.data", []));
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [debouncedReloadStores]);
 
   return (
     <div className="catalogue">
@@ -153,24 +241,13 @@ function Catalogue(props) {
       </div>
       {availableSubCategories.length > 0 && <div className="subcategories mt-3">
         {availableSubCategories.map((subCategory) => {
-          // Generate random background color
-          const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-          
-          // Calculate contrasting text color based on background brightness
-          const r = parseInt(randomColor.slice(1,3), 16);
-          const g = parseInt(randomColor.slice(3,5), 16);
-          const b = parseInt(randomColor.slice(5,7), 16);
-          const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-          const textColor = brightness > 128 ? '#000000' : '#FFFFFF';
-
           return <div
-          // style={{backgroundColor: randomColor, color: textColor}}
           className={
-            subCategory == selectedSubCategory
+            subCategory === selectedSubCategory
               ? "selected sub-category second-grey"
               : "sub-category second-grey"
           }
-          onClick={() => {selectedSubCategory == subCategory ? setSelectedSubCategory(undefined) : setSelectedSubCategory(subCategory)}}
+          onClick={() => {selectedSubCategory === subCategory ? setSelectedSubCategory(undefined) : setSelectedSubCategory(subCategory)}}
           >{subCategory}</div>;
         })}
       </div>}
@@ -220,25 +297,31 @@ function Catalogue(props) {
         
       </div>
       <div className="posts mt-1">
-        <div className={isLoading ? "loader active" : "loader" }></div>
         <Row>
-          {isLoading ? (
-            // Show 9 skeleton loaders while loading
-            Array(9).fill(0).map((_, index) => (
-              <Col key={index} md="4" sm="4" lg="4" xs="4" className="p-2">
-                <Skeleton variant="rectangular" height={200} />
+          {posts.map((post) => {
+            return (
+              <Col key={post._id} md="4" sm="4" lg="4" xs="4" className="p-2">
+                <Post postinfo={post}></Post>
               </Col>
-            ))
-          ) : (
-            posts.map((post) => {
-              return (
-                <Col md="4" sm="4" lg="4" xs="4" className="p-2">
-                  <Post postinfo={post}></Post>
-                </Col>
-              );
-            })
-          )}
+            );
+          })}
         </Row>
+        
+        {/* Loading state */}
+        <div ref={loadingRef} className="loading-container">
+          {isLoading && (
+            <Row>
+              {Array(postsPerPage).fill(0).map((_, index) => (
+                <Col key={index} md="4" sm="4" lg="4" xs="4" className="p-2">
+                  <Skeleton variant="rectangular" height={200} />
+                </Col>
+              ))}
+            </Row>
+          )}
+          {!isLoading && !hasMore && posts.length > 0 && (
+            <div className="end-message">No more posts to load</div>
+          )}
+        </div>
       </div>
     </div>
   );
