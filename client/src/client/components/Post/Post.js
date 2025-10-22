@@ -49,7 +49,7 @@ const Post = (props) => {
         <Image
           className="post"
           src={getOptimisedURL(props?.postinfo?.thumbnailURL)}
-          onClick={() => handleInstagramClick(props?.postinfo?.thumbnailURL)}
+          onClick={() => handleInstagramClick(props?.postinfo?.post)}
         />
       )}
     </div>
