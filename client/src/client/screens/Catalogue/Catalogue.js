@@ -219,7 +219,7 @@ function Catalogue(props) {
                         window.location.origin +
                         "/categories/" +
                         highlight +
-                        ".png"
+                        ".avif"
                       }
                       title={highlight}
                     ></Image>

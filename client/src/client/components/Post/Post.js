@@ -35,13 +35,21 @@ const Post = (props) => {
     }
   };
 
+  const getOptimisedURL = (imageURL) => {
+    const optimizedSrc = imageURL ? imageURL.replace(
+      "/upload/",
+      "/upload/f_auto,q_auto/" 
+    ) : imageURL;
+    return optimizedSrc;
+  }
+
   return (
     <div className="post-container">
       {props.postinfo && (
         <Image
           className="post"
-          src={props.postinfo.thumbnailURL}
-          onClick={() => handleInstagramClick(props.postinfo.postURL)}
+          src={getOptimisedURL(props?.postinfo?.thumbnailURL)}
+          onClick={() => handleInstagramClick(props?.postinfo?.thumbnailURL)}
         />
       )}
     </div>
