@@ -248,7 +248,7 @@ function Catalogue(props) {
               : "sub-category second-grey"
           }
           onClick={() => {selectedSubCategory === subCategory ? setSelectedSubCategory(undefined) : setSelectedSubCategory(subCategory)}}
-          >{subCategory}</div>;
+          >{subCategory.toString().toUpperCase()}</div>;
         })}
       </div>}
       <div className="search-container mt-3 mb-3">
