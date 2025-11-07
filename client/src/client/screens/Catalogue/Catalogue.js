@@ -258,7 +258,7 @@ function Catalogue(props) {
             <input
               type="text"
               className="search-input"
-              placeholder="Search across products, categories, stores etc"
+              placeholder="Search for products, categories, stores"
               value={searchString}
               onChange={(e) => {
                 setSearchString(e.target.value);
@@ -318,9 +318,9 @@ function Catalogue(props) {
               ))}
             </Row>
           )}
-          {!isLoading && !hasMore && posts.length > 0 && (
+          {/* {!isLoading && !hasMore && posts.length > 0 && (
             <div className="end-message">No more posts to load</div>
-          )}
+          )} */}
         </div>
       </div>
     </div>
