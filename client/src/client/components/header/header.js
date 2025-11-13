@@ -42,9 +42,7 @@ const Header = (props) => {
       </div> */}
       <div className="description second-grey">
         <span>
-          Instagram is home for numerous pages as stores with wonderful
-          and vivid collection of products. Instalogue gathers them and provide better discoverability of these pages and products.
-          Tap on highlights to filter. Happy shopping.
+        Instagram has numerous pages that act as stores with large collections of amazing products. Instalogue brings them all together, to make it easier for you to discover these pages and products. Tap the highlights to filter or search acorss stores or products. Enjoy shopping!
         </span>
         {/* While providing discoverability for online stores, instalogue aims at providing an online shopping mall experience. */}
       </div>
