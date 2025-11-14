@@ -51,7 +51,7 @@ getStores = async (req, res) => {
     payLoad.category = selectedCategory;
   }
   if(selectedSubCategory) {
-    payLoad.subCategory = selectedSubCategory;
+    payLoad.subCategory = { $regex: new RegExp(selectedSubCategory, "i") };
   }
   if (searchString?.length > 0) {
     searchOrArray.push(
@@ -94,7 +94,16 @@ getSubCategories = async (req, res) => {
   CatalogueSchema.find(payLoad)
     .distinct("subCategory", (err,subCategories) => {
       if(!err){
-        return res.status(200).json({ success: true, data: subCategories });
+        let cleanedSubCategories = subCategories
+        .flatMap(item => 
+          item
+            .split(",")           // split on comma
+            .map(s => s.trim())   // trim spaces
+            .filter(Boolean)      // remove empty strings
+        );
+
+      cleanedSubCategories = [...new Set(cleanedSubCategories)];
+        return res.status(200).json({ success: true, data: cleanedSubCategories });
       }
     })
 };

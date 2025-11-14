@@ -313,7 +313,7 @@ function Catalogue(props) {
             <Row>
               {Array(postsPerPage).fill(0).map((_, index) => (
                 <Col key={index} md="4" sm="4" lg="4" xs="4" className="p-2">
-                  <Skeleton variant="rectangular" height={200} />
+                  <Skeleton variant="rectangular" height={150} />
                 </Col>
               ))}
             </Row>
