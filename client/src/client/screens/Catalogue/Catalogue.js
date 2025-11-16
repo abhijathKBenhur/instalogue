@@ -43,10 +43,15 @@ function Catalogue(props) {
         });
 
         const newPosts = _.get(results, "data.data", []);
-        setHasMore(newPosts.length === postsPerPage);
+        // Set hasMore to false if we got fewer items than requested, or if we got 0 items when appending
+        const hasMoreData = newPosts.length === postsPerPage;
+        setHasMore(hasMoreData);
 
         if (append) {
-          setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+          // Only append if we got results, otherwise we've reached the end
+          if (newPosts.length > 0) {
+            setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+          }
         } else {
           setPosts(newPosts);
         }
@@ -313,7 +318,7 @@ function Catalogue(props) {
             <Row>
               {Array(postsPerPage).fill(0).map((_, index) => (
                 <Col key={index} md="4" sm="4" lg="4" xs="4" className="p-2">
-                  <Skeleton variant="rectangular" height={150} />
+                  <Skeleton variant="rectangular" height={300}  />
                 </Col>
               ))}
             </Row>
