@@ -27,10 +27,15 @@ function Catalogue(props) {
   const isFetchingRef = useRef(false); // Guards against duplicate loads
   const lastQueryKeyRef = useRef(null); // Deduplicate effect-triggered fetches
   const enableInfiniteScrollRef = useRef(false); // Only load more after user scrolls
+  const hasMoreRef = useRef(true); // Track hasMore in ref to avoid stale closures
+  const postsLengthRef = useRef(0); // Track posts length in ref
 
   // Reload stores function (stable)
   const reloadStores = useCallback(
     async ({ searchString, selectedCategory, selectedSubCategory, offset = 0, append = false }) => {
+      if (isFetchingRef.current) {
+        return; // Prevent concurrent fetches
+      }
       isFetchingRef.current = true;
       setLoading(true);
       try {
@@ -43,18 +48,33 @@ function Catalogue(props) {
         });
 
         const newPosts = _.get(results, "data.data", []);
-        // Set hasMore to false if we got fewer items than requested, or if we got 0 items when appending
+        // Set hasMore to true only if we got exactly postsPerPage items (indicating there might be more)
+        // If we got fewer, we've reached the end
         const hasMoreData = newPosts.length === postsPerPage;
         setHasMore(hasMoreData);
+        hasMoreRef.current = hasMoreData;
 
         if (append) {
-          // Only append if we got results, otherwise we've reached the end
+          // Append new posts if we got any results
           if (newPosts.length > 0) {
-            setPosts((prevPosts) => [...prevPosts, ...newPosts]);
+            setPosts((prevPosts) => {
+              const updated = [...prevPosts, ...newPosts];
+              postsLengthRef.current = updated.length;
+              return updated;
+            });
+          } else {
+            // If we got 0 results when appending, we've definitely reached the end
+            setHasMore(false);
+            hasMoreRef.current = false;
           }
         } else {
           setPosts(newPosts);
+          postsLengthRef.current = newPosts.length;
         }
+      } catch (error) {
+        console.error("Error loading stores:", error);
+        setHasMore(false); // On error, stop trying to load more
+        hasMoreRef.current = false;
       } finally {
         setLoading(false);
         isFetchingRef.current = false;
@@ -103,22 +123,22 @@ function Catalogue(props) {
       // Only append more when we already have some posts to avoid double initial load
       if (
         entry.isIntersecting &&
-        hasMore &&
+        hasMoreRef.current &&
         !isLoading &&
         !isFetchingRef.current &&
-        posts.length > 0 &&
+        postsLengthRef.current > 0 &&
         enableInfiniteScrollRef.current
       ) {
         reloadStores({
           searchString,
           selectedCategory,
           selectedSubCategory,
-          offset: posts.length,
+          offset: postsLengthRef.current,
           append: true,
         });
       }
     },
-    [hasMore, isLoading, reloadStores, searchString, selectedCategory, selectedSubCategory, posts.length]
+    [reloadStores, searchString, selectedCategory, selectedSubCategory, isLoading]
   );
 
   useEffect(() => {
@@ -161,6 +181,8 @@ function Catalogue(props) {
     // Reset pagination state when search criteria changes
     setPosts([]);
     setHasMore(true);
+    hasMoreRef.current = true;
+    postsLengthRef.current = 0;
 
     const params = {
       searchString,
