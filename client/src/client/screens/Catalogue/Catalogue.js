@@ -22,20 +22,15 @@ function Catalogue(props) {
   
   // Pagination state
   const [hasMore, setHasMore] = useState(true);
-  const { postsPerPage } = useViewportCalculator();
+  const { postsPerPage, deviceType } = useViewportCalculator();
   const loadingRef = useRef(null); // Reference for intersection observer
   const isFetchingRef = useRef(false); // Guards against duplicate loads
   const lastQueryKeyRef = useRef(null); // Deduplicate effect-triggered fetches
   const enableInfiniteScrollRef = useRef(false); // Only load more after user scrolls
-  const hasMoreRef = useRef(true); // Track hasMore in ref to avoid stale closures
-  const postsLengthRef = useRef(0); // Track posts length in ref
 
   // Reload stores function (stable)
   const reloadStores = useCallback(
     async ({ searchString, selectedCategory, selectedSubCategory, offset = 0, append = false }) => {
-      if (isFetchingRef.current) {
-        return; // Prevent concurrent fetches
-      }
       isFetchingRef.current = true;
       setLoading(true);
       try {
@@ -48,33 +43,18 @@ function Catalogue(props) {
         });
 
         const newPosts = _.get(results, "data.data", []);
-        // Set hasMore to true only if we got exactly postsPerPage items (indicating there might be more)
-        // If we got fewer, we've reached the end
+        // Set hasMore to false if we got fewer items than requested, or if we got 0 items when appending
         const hasMoreData = newPosts.length === postsPerPage;
         setHasMore(hasMoreData);
-        hasMoreRef.current = hasMoreData;
 
         if (append) {
-          // Append new posts if we got any results
+          // Only append if we got results, otherwise we've reached the end
           if (newPosts.length > 0) {
-            setPosts((prevPosts) => {
-              const updated = [...prevPosts, ...newPosts];
-              postsLengthRef.current = updated.length;
-              return updated;
-            });
-          } else {
-            // If we got 0 results when appending, we've definitely reached the end
-            setHasMore(false);
-            hasMoreRef.current = false;
+            setPosts((prevPosts) => [...prevPosts, ...newPosts]);
           }
         } else {
           setPosts(newPosts);
-          postsLengthRef.current = newPosts.length;
         }
-      } catch (error) {
-        console.error("Error loading stores:", error);
-        setHasMore(false); // On error, stop trying to load more
-        hasMoreRef.current = false;
       } finally {
         setLoading(false);
         isFetchingRef.current = false;
@@ -123,22 +103,22 @@ function Catalogue(props) {
       // Only append more when we already have some posts to avoid double initial load
       if (
         entry.isIntersecting &&
-        hasMoreRef.current &&
+        hasMore &&
         !isLoading &&
         !isFetchingRef.current &&
-        postsLengthRef.current > 0 &&
+        posts.length > 0 &&
         enableInfiniteScrollRef.current
       ) {
         reloadStores({
           searchString,
           selectedCategory,
           selectedSubCategory,
-          offset: postsLengthRef.current,
+          offset: posts.length,
           append: true,
         });
       }
     },
-    [reloadStores, searchString, selectedCategory, selectedSubCategory, isLoading]
+    [hasMore, isLoading, reloadStores, searchString, selectedCategory, selectedSubCategory, posts.length]
   );
 
   useEffect(() => {
@@ -170,6 +150,38 @@ function Catalogue(props) {
     };
   }, [onIntersect]);
 
+  // Enable infinite scroll after initial posts are loaded (for laptop screens where content might not require scrolling)
+  useEffect(() => {
+    if (!isLoading && posts.length > 0 && !enableInfiniteScrollRef.current) {
+      // Use a small delay to ensure DOM is fully rendered, then check if scrolling is needed
+      const timer = setTimeout(() => {
+        const needsScrolling = document.documentElement.scrollHeight > document.documentElement.clientHeight;
+        // If no scrolling is needed but we have posts and might have more to load, enable infinite scroll
+        // This handles the case where initial content fits on screen on laptop
+        if (!needsScrolling && hasMore) {
+          enableInfiniteScrollRef.current = true;
+          // Manually check if loading element is visible and trigger load if needed
+          // since observer won't re-trigger for already-intersecting elements
+          if (loadingRef.current && !isFetchingRef.current && hasMore && !isLoading) {
+            const rect = loadingRef.current.getBoundingClientRect();
+            const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+            if (isVisible) {
+              // Manually trigger the intersection logic with same conditions as observer
+              reloadStores({
+                searchString,
+                selectedCategory,
+                selectedSubCategory,
+                offset: posts.length,
+                append: true,
+              });
+            }
+          }
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, posts.length, hasMore, reloadStores, searchString, selectedCategory, selectedSubCategory]);
+
   // Handle search, category, subcategory -> store loading (single source of truth)
   useEffect(() => {
     const currentKey = JSON.stringify({ s: searchString || "", c: selectedCategory || "", sc: selectedSubCategory || "" });
@@ -181,8 +193,6 @@ function Catalogue(props) {
     // Reset pagination state when search criteria changes
     setPosts([]);
     setHasMore(true);
-    hasMoreRef.current = true;
-    postsLengthRef.current = 0;
 
     const params = {
       searchString,
@@ -338,7 +348,7 @@ function Catalogue(props) {
         <div ref={loadingRef} className="loading-container">
           {isLoading && (
             <Row>
-              {Array(postsPerPage).fill(0).map((_, index) => (
+              {Array(deviceType === 'mobile' ? 6 : postsPerPage).fill(0).map((_, index) => (
                 <Col key={index} md="4" sm="4" lg="4" xs="4" className="p-2">
                   <Skeleton variant="rectangular" height={300}  />
                 </Col>
