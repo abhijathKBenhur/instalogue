@@ -150,6 +150,7 @@ function Catalogue(props) {
     };
   }, [onIntersect]);
 
+  
   // Enable infinite scroll after initial posts are loaded (for laptop screens where content might not require scrolling)
   useEffect(() => {
     if (!isLoading && posts.length > 0 && !enableInfiniteScrollRef.current) {
