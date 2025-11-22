@@ -26,7 +26,6 @@ function Catalogue(props) {
   const loadingRef = useRef(null); // Reference for intersection observer
   const isFetchingRef = useRef(false); // Guards against duplicate loads
   const lastQueryKeyRef = useRef(null); // Deduplicate effect-triggered fetches
-  const enableInfiniteScrollRef = useRef(false); // Only load more after user scrolls
 
   // Reload stores function (stable)
   const reloadStores = useCallback(
@@ -106,8 +105,7 @@ function Catalogue(props) {
         hasMore &&
         !isLoading &&
         !isFetchingRef.current &&
-        posts.length > 0 &&
-        enableInfiniteScrollRef.current
+        posts.length > 0
       ) {
         reloadStores({
           searchString,
@@ -122,27 +120,15 @@ function Catalogue(props) {
   );
 
   useEffect(() => {
-    // Enable infinite scroll only after the user has scrolled/interacted
-    const enable = () => {
-      enableInfiniteScrollRef.current = true;
-      // Remove listeners after first interaction
-      window.removeEventListener('scroll', enable);
-      window.removeEventListener('wheel', enable);
-      window.removeEventListener('touchmove', enable);
-    };
-    window.addEventListener('scroll', enable, { passive: true });
-    window.addEventListener('wheel', enable, { passive: true });
-    window.addEventListener('touchmove', enable, { passive: true });
-
-    const observer = new IntersectionObserver(onIntersect, { threshold: 0.1 });
+    const observer = new IntersectionObserver(onIntersect, { 
+      threshold: 0.1,
+      rootMargin: '100px' // Trigger slightly before the element is visible
+    });
     const currentLoader = loadingRef.current;
     if (currentLoader) {
       observer.observe(currentLoader);
     }
     return () => {
-      window.removeEventListener('scroll', enable);
-      window.removeEventListener('wheel', enable);
-      window.removeEventListener('touchmove', enable);
       if (currentLoader) {
         observer.unobserve(currentLoader);
       }
@@ -151,23 +137,21 @@ function Catalogue(props) {
   }, [onIntersect]);
 
   
-  // Enable infinite scroll after initial posts are loaded (for laptop screens where content might not require scrolling)
+  // Auto-load more posts when content fits on screen (for laptop screens where scrolling isn't needed)
   useEffect(() => {
-    if (!isLoading && posts.length > 0 && !enableInfiniteScrollRef.current) {
-      // Use a small delay to ensure DOM is fully rendered, then check if scrolling is needed
+    if (!isLoading && posts.length > 0 && hasMore && !isFetchingRef.current) {
+      // Use a small delay to ensure DOM is fully rendered
       const timer = setTimeout(() => {
         const needsScrolling = document.documentElement.scrollHeight > document.documentElement.clientHeight;
-        // If no scrolling is needed but we have posts and might have more to load, enable infinite scroll
-        // This handles the case where initial content fits on screen on laptop
-        if (!needsScrolling && hasMore) {
-          enableInfiniteScrollRef.current = true;
-          // Manually check if loading element is visible and trigger load if needed
-          // since observer won't re-trigger for already-intersecting elements
-          if (loadingRef.current && !isFetchingRef.current && hasMore && !isLoading) {
+        // If no scrolling is needed but we have posts and might have more to load, auto-load
+        // This handles the case where initial content fits on screen
+        if (!needsScrolling) {
+          // Check if loading element is visible (it should be if content fits on screen)
+          if (loadingRef.current) {
             const rect = loadingRef.current.getBoundingClientRect();
             const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
             if (isVisible) {
-              // Manually trigger the intersection logic with same conditions as observer
+              // Manually trigger load since observer might not fire for already-visible elements
               reloadStores({
                 searchString,
                 selectedCategory,
@@ -178,7 +162,7 @@ function Catalogue(props) {
             }
           }
         }
-      }, 100);
+      }, 200);
       return () => clearTimeout(timer);
     }
   }, [isLoading, posts.length, hasMore, reloadStores, searchString, selectedCategory, selectedSubCategory]);
