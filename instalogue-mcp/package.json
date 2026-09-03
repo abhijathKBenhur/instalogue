@@ -1,0 +1,14 @@
+{
+  "name": "instalogue-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for automating Instalogue store submissions",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "dotenv": "^16.4.5"
+  }
+}

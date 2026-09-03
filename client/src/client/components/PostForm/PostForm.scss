@@ -2,6 +2,35 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    .pf-dropzone{
+        border: 2px dashed #aaa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.2s, background 0.2s;
+        &.dragging{
+            border-color: #1f22b2;
+            background: #f3f4ff;
+        }
+        p{
+            margin: 0;
+            color: #777;
+        }
+        .pf-preview{
+            max-width: 100%;
+            max-height: 240px;
+            border-radius: 6px;
+        }
+        .pf-spinner{
+            margin-top: 10px;
+        }
+    }
+    .pf-url{
+        word-break: break-all;
+        color: #1a7f37;
+        margin-top: -12px;
+    }
     .btn{
         border: 1px solid #DEE2E6 !important;
         &:focus{

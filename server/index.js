@@ -2,7 +2,9 @@ const express = require("express");
 const cors = require("cors");
 
 const catalogueAPI = require("./routes/catalogueAPI");
+const cloudinaryAPI = require("./routes/CloudinaryAPI");
 const adminAPI = require("./routes/adminAPI");
+const instagramAPI = require("./routes/instagramAPI");
 const dotenv = require("dotenv");
 const path = require("path");
 
@@ -11,8 +13,8 @@ const PORT = process.env.PORT || 4000;
 const mongoConnection = require("./db-config/mongodb");
 dotenv.config();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 
 app.use(
@@ -38,7 +40,9 @@ app.use((req, res, next) => {
 });
 
 app.use("/api", catalogueAPI);
+app.use("/api", cloudinaryAPI);
 app.use("/api", adminAPI);
+app.use("/api", instagramAPI);
 
 app.get("/", (req, res) => {
   res.status(200).json("Instalogue Server is up!");

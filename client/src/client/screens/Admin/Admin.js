@@ -66,12 +66,7 @@ function Admin() {
   }
 
   return (
-    <div className="admin-listing-page">
-      <div className="text-center mb-4">
-      <Button variant="primary" onClick={() => { history.push("/") }}>
-          <HomeIcon />
-        </Button>
-      </div>
+    <div className="admin-listing-page mt-5">
       <PostForm
             initialData={editingStore}
           />

@@ -6,6 +6,7 @@ import logo from "../../../assets/logo/instalogue_logo.png";
 // import reactGA from "react-ga";
 
 const Header = (props) => {
+  const history = useHistory();
   useEffect(() => {
    
   }, []);
@@ -13,7 +14,7 @@ const Header = (props) => {
   return (
     <div className="page-header d-flex">
     <div className="profile-image-name">
-      <div>
+      <div  onClick={() => { history.push("/") }}>
         <Image
           className="brand"
           roundedCircle
